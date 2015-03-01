@@ -1,3 +1,11 @@
+/*
+* This file will generate an sql file to populate a database table with priem numbers
+* The storage is 100 numbers per database row, however to save space - it is compressed.
+* The compressions is that each column value is the numeric difference of the previous prime and the current one.
+* It's almost entirely procedural with the exception of the object "out"
+*/
+
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -5,6 +13,7 @@
 #include <string>
 #include <sstream>
 
+/*Commnad line*/
 using namespace std;
 
 long primes_lookup[10000];
@@ -60,17 +69,18 @@ int main(int argc, char *argv[])
     for (i=1; i<10000; i++){
             primes_lookup[i] = next_prime(primes_lookup[i-1]);
     }
-    //done builing primes array
+    //done building primes array
     
     long long p;
     long long n;
     string primes_output = "";
     
+	//request a starting number from user interface
     cout << "Type a starting number (e.g 1) \n";
     
     cin >> p;
     //p = round(p);
-    cout << "What number prime is  " << p << " (e.g. 7 for 17)\n";
+    cout << "What number prime is  " << p << "? (e.g. 17 is the 7th, so you would type 7)\n";
     cin >> n;
     
     long a;
@@ -79,7 +89,8 @@ int main(int argc, char *argv[])
     std::stringstream out;
     std::stringstream filename;
     
-
+	//the 3 hardcoded values here represent the three for loops (a,j and i) a little further down
+	//todo: these would be better as nicely named constants
     filename << (long long) (n+(200000*100*1000)) << ".sql";
     
     //db column names string
@@ -110,8 +121,12 @@ int main(int argc, char *argv[])
         primes_output = out.str();
         primes_output = primes_output.substr(0,primes_output.length()-1) + ";\n";
         out.str("");
-        cout << p << "\n";//cout << ".";//done another thousand primes so display a dot...
-        file_put_contents(primes_output,filename.str());
+
+		//output a prime number to show progress
+        cout << p << "\n";
+        
+		//save sql queries to disk
+		file_put_contents(primes_output,filename.str());
     }
     
     system("PAUSE");
