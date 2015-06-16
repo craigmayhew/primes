@@ -7,7 +7,7 @@ sudo yum update -y
 sudo yum install -y git
 
 #install apache, php 5.6 and the mysql connector
-sudo yum install -y httpd24 php56 php56-mysqlnd
+sudo yum install -y httpd24 php56 php56-mysqlnd php56-bcmath
 
 #now if you want to turn the service on
 sudo service httpd start
