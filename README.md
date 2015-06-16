@@ -1,4 +1,4 @@
-primes
+primes webserver
 ======
 
-Open Source code powering bigprimes.net
+Open Source code powering api.bigprimes.net
