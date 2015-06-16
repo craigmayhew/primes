@@ -23,5 +23,5 @@ find /var/www -type f -exec sudo chmod 0664 {} +
 #pull the webserver files from a public git repo
 cd /var/www/htdocs/
 git clone -b webserver https://github.com/craigmayhew/primes.git
-rsync -a primes/ ./
-rm -rf primes
+sudo rsync -a primes/ ./
+sudo rm -rf primes
