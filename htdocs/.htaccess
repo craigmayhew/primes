@@ -1,0 +1,8 @@
+RewriteEngine On    # Turn on the rewriting engine
+
+#hide git frow web
+RedirectMatch 404 "(?:.*)/(?:\.git|file_or_dir)(?:/.*)?$"
+
+RewriteRule ^wu-get.php$ ../index.php?page=wuget [NC,L] 
+RewriteRule ^wu-result.php$ ../index.php?page=wuresult [NC,L] 
+RewriteRule ^$ ../index.php?page=404 [NC,L]
