@@ -1,6 +1,5 @@
 <?php
-$dbPass = '';
-mysql_connect('localhost', 'hp', $dbPass);
+mysql_connect(getenv('bigprimesDBEndPoint'), getenv('bigprimesDBUser'), getenv('bigprimesDBPass'));
 do {
 // if the work unit count is a bit low, make some more...
 $q = "SELECT COUNT(*) FROM `hp`.`workUnit` WHERE `timeSent` IS NULL"; 

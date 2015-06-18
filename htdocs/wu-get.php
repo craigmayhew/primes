@@ -2,8 +2,7 @@
 // echo '{ "command": "message", "message": "Greetings from the planet Zib!" }'; exit();
 // echo '{ "command": "sleep" }'; exit();
 // echo '{ "command": "shutdown" }'; exit();
-$dbPass = '';
-mysql_connect('localhost', 'hp', $dbPass);
+mysql_connect(getenv('bigprimesDBEndPoint'), getenv('bigprimesDBUser'), getenv('bigprimesDBPass'));
 // if the work unit count is a bit low, make some more...
 $q = "SELECT * FROM `hp`.`workUnit` WHERE `timeSent` IS NULL LIMIT 1";
 $res = mysql_query($q);
