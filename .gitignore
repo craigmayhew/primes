@@ -1,3 +1,7 @@
+cgi-bin
 composer.lock
+error
+icons/
+noindex
 vendor
 *~
