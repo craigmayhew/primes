@@ -1,26 +1,29 @@
 <?php
-use Aws\Common\Aws;
 
 class awsS3{
-  static private $aws;
   static private $bucket;
   private $client;
   function __construct(){
     $this->config = new \config();
     $this->loadConfig(); 
   }
+
   public function loadConfig(){
     // Create the AWS service builder, providing the path to the config file
-    self::$aws        = Aws::factory($this->config->projectPath.'config/aws.php');
-    self::$bucket     = 'bigprimes';
-    $this->client   = self::$aws->get('s3');
+    $awsConfig = [
+      'credentials' => ['key' => getenv('bigprimesawskey'),'secret' => getenv('bigprimesawssecret')],
+      'region' => 'eu-west-1',
+      'version'=> '2006-03-01'
+    ];
+    self::$bucket = 'bigprimes';
+    $this->client = new \Aws\S3\S3Client($awsConfig);
   }
   /* $tmpFileName string local filepath
    * $s3FileName string s3 filepath, relative from bucket. Should not start with a slash
    */
-  public function saveFileToS3($tmpFileName,$s3FileName=false,$overWriteFile=false){
+  public function saveDataToS3($data,$s3FileName=false,$overWriteFile=false){
     //At this point, you can now create clients using the get() method of the Aws object:
-    $sha1           = sha1_file($tmpFileName);
+    $sha1           = sha1($data);
     $s3FileName     = $s3FileName?$s3FileName:'uploads/'.$sha1;
     
     if(false == $overWriteFile){
@@ -32,12 +35,11 @@ class awsS3{
     if($fileExistsInS3){
 
     }else{
-        $command = $this->client->getCommand('PutObject', array(
+        $result = $this->client->putObject(array(
           'Bucket'       => self::$bucket,
           'Key'          => $s3FileName,
-          'SourceFile'   => $tmpFileName
+          'Body'         => $data
          ));
-        $command->getResult();
     }
     return $sha1;
   }
