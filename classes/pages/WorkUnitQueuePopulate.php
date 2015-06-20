@@ -24,7 +24,7 @@ class WorkUnitQueuePopulate extends \pages {
         }
         $start = bcadd($res, '1');
         for ($i = 0; $i < 50; $i++) {
-                $size = rand(100000, 100000);
+                $size = rand(1000000, 1000000);
                 $to   = bcadd($start, bcadd($size, "-1"));
                 $q = "INSERT INTO `bigprimes`.`workUnit` (`id`, `generated`, `start`, `to`, `technique`, `size`) VALUES ('" . self::gen_uuid() . "', '" . time() . "', '" . $start . "', '" . $to . "', 'bf-int', '$size');";
                 mysql_query($q);
