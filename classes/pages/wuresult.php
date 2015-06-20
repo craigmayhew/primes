@@ -11,18 +11,9 @@ class wuresult extends \pages{
     //aws library
     $aws = new \awsS3();
 
-    //create a uniquely named temp file
-    $filename = '/tmp/'.sha1(rand().time().$posted->id);
-
-    //save json to disk
-    file_put_contents($filename,$postedJSON);
-
     //write file to s3
-    $return   = $aws->saveFileToS3($filename,$posted->id);
-    
-    //delete temporary file
-    unlink($filename);
+    $return   = $aws->saveDataToS3($postedJSON,$posted->id);
 
-    return '';
+    return 'success';
   }
 }

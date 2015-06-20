@@ -23,11 +23,12 @@ class WorkUnitQueuePopulate extends \pages {
                 exit();
         }
         $start = bcadd($res, '1');
-        for ($i = 0; $i < 500; $i++) {
-                $size = rand(500000, 500000);
-                $q = "INSERT INTO `bigprimes`.`workUnit` (`id`, `generated`, `start`, `to`, `technique`, `size`) VALUES ('" . self::gen_uuid() . "', '" . time() . "', '" . $start . "', '" . bcadd($size, $start) . "', 'bf', '$size');";
+        for ($i = 0; $i < 50; $i++) {
+                $size = rand(100000, 100000);
+                $to   = bcadd($start, bcadd($size, "-1"));
+                $q = "INSERT INTO `bigprimes`.`workUnit` (`id`, `generated`, `start`, `to`, `technique`, `size`) VALUES ('" . self::gen_uuid() . "', '" . time() . "', '" . $start . "', '" . $to . "', 'bf-int', '$size');";
                 mysql_query($q);
-                $start = bcadd(bcadd($start, $size), 1);
+                $start = bcadd($to, 1);
         }
         $q = "UPDATE `bigprimes`.`global` SET `value` = '" . bcadd($start, "-1") . "' WHERE `key` = 'maxWorkunit';";
         mysql_query($q);
