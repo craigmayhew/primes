@@ -6,14 +6,19 @@ class WorkUnitQueuePopulate extends \pages {
     mysql_connect(getenv('bigprimesDBEndPoint'), getenv('bigprimesDBUser'), getenv('bigprimesDBPass'));
 
     do {
+      // reset work units that aren't coming back
+      $q = "UPDATE `bigprimes`.`wu` SET `state` = 'New', `time_sent` = Null, `sent_to_client` = Null WHERE `state` = 'Crunching' AND `time_sent` < UNIX_TIMESTAMP() - 3600";
+      mysql_query($q);
+      $q = "UPDATE `bigprimes`.`wu` SET `state` = 'Needs Validating', `time_sent_validation` = Null, `validation_client` = Null WHERE `state` = 'Validating' AND `time_sent_validation` < UNIX_TIMESTAMP() - 3600";
+      mysql_query($q);
       // if the work unit count is a bit low, make some more...
-      $q = "SELECT COUNT(*) FROM `bigprimes`.`workUnit` WHERE `timeSent` IS NULL";
+      $q = "SELECT COUNT(*) FROM `bigprimes`.`wu` WHERE `state` = 'New'";
       $res = mysql_query($q);
       $count =  mysql_result($res, 0);
       echo "$count units in buffer\r\n";
-      if ($count < 20) {
+      if ($count < 150) {
         echo "Generating some more";
-        // generate 1000 units
+        // generate 50 units
         // where to start?
         $q = "SELECT `value` FROM `bigprimes`.`global` WHERE `key` = 'maxWorkunit';";
         $res = mysql_query($q);
@@ -26,7 +31,7 @@ class WorkUnitQueuePopulate extends \pages {
         for ($i = 0; $i < 50; $i++) {
                 $size = rand(400000, 1500000);
                 $to   = bcadd($start, bcadd($size, "-1"));
-                $q = "INSERT INTO `bigprimes`.`workUnit` (`id`, `generated`, `start`, `to`, `technique`, `size`) VALUES ('" . self::gen_uuid() . "', '" . time() . "', '" . $start . "', '" . $to . "', 'bf', '$size');";
+                $q = "INSERT INTO `bigprimes`.`wu` (`wu_id`, `generated`, `start`, `to`, `technique`, `size`, `state`) VALUES ('" . self::gen_uuid() . "', '" . time() . "', '" . $start . "', '" . $to . "', 'bf', '$size', 'New');";
                 mysql_query($q);
                 echo '.';
                 $start = bcadd($to, 1);

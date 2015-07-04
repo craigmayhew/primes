@@ -1,6 +1,6 @@
 <?php
 
-return array(
+$awsConfig = array(
   // Bootstrap the configuration file with AWS specific features
   'includes' => array('_aws'),
   'services' => array(

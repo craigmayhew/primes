@@ -6,6 +6,6 @@ class live{
   public $projectPath = '';
 
   function __construct(){
-    $this->projectPath = __DIR__.'/../../../';
+    $this->projectPath = __DIR__.'/../../';
   }
 }
