@@ -13,14 +13,32 @@ class wuget extends \pages{
     // check the clientId that we've got
     $clientId = $_GET['clientId'];
     $q = "SELECT * FROM `bigprimes`.`client` WHERE `client_id` = '" . mysql_escape_string($clientId) . "';"; // for some reason mysql_real_escape_string is returning empty string?
-    $res = mysql_query($q);
+    $res    = mysql_query($q);
     if (mysql_num_rows($res) != 1) {
       return ' { "command": "message", "message": "The client ID you provided is not known. Check your config?" } ';
       exit();
     }
 
+    $client = mysql_fetch_assoc($res);
 
-    $q = "SELECT * FROM `bigprimes`.`wu` WHERE `state` = 'Needs Validating' AND `sent_to_client` != '" . mysql_escape_string($clientId) . "' ORDER BY `generated` ASC LIMIT 1";
+    $q = 
+      "SELECT 
+        wu.wu_id AS wu_id,
+        wu.sent_to_client AS sent_to_client,
+        wu.`start` AS `start`,
+        wu.`to` AS `to`,
+        wu.`size` AS `size`,
+        wu.`technique` AS `technique`,
+        `user`.`name` AS `name`
+      FROM `bigprimes`.`wu` 
+      LEFT JOIN `bigprimes`.`client` ON client.client_id=wu.sent_to_client
+      LEFT JOIN `bigprimes`.`user` ON user.user_id=client.user
+      WHERE 
+        `state` = 'Needs Validating' 
+        AND `sent_to_client` != '" . mysql_escape_string($clientId) . "' 
+        AND sent_to_client NOT IN(SELECT c2.client_id FROM `bigprimes`.`client` AS c2 WHERE c2.user='".mysql_escape_string($client['user'])."')
+      ORDER BY `generated` ASC
+      LIMIT 1";
     $res = mysql_query($q);
     if (mysql_num_rows($res) == 1) {
       $unit = mysql_fetch_assoc($res);
@@ -31,7 +49,7 @@ class wuget extends \pages{
         'start'     => $unit['start'],
         'to'        => $unit['to'],
         'technique' => $unit['technique'],
-        'message'   => "Validating WU " . $unit['wu_id'] . " done by " . $unit['sent_to_client']
+        'message'   => "Validating WU " . $unit['wu_id'] . " done by " . $unit['name'] . ". " . $unit['start'] . " - " . $unit['to'] . " (" . $unit['size'] . ", " . $unit['technique'] . ")."
       );
       return json_encode($wu);
     } else {
@@ -48,7 +66,7 @@ class wuget extends \pages{
             'start'     => $unit['start'],
             'to'        => $unit['to'],
             'technique' => $unit['technique'],
-            'message'   => "First run of WU " . $unit['wu_id']
+            'message'   => "First run of WU " . $unit['wu_id'] . ". " . $unit['start'] . " - " . $unit['to'] . " (" . $unit['size'] . ", " . $unit['technique'] . ")."
       );
 
       return json_encode($wu);
