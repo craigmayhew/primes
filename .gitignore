@@ -1,7 +1,7 @@
 cgi-bin
 composer.lock
 error
-icons/
+icons
 noindex
 vendor
 .htaccess
