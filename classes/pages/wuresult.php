@@ -17,7 +17,7 @@ class wuresult extends \pages{
               WHERE `wu_id` = "' . mysql_escape_string($posted['id']) . '"
               AND `state` = "Crunching"
               AND `sent_to_client` = "' . mysql_escape_string($posted['clientId']) . '"
-              AND `time_sent` > UNIX_TIMESTAMP() - 1800
+              AND `time_sent` > UNIX_TIMESTAMP() - 3000 
               LIMIT 1;';
     $res = mysql_query($query);
     
@@ -46,7 +46,7 @@ class wuresult extends \pages{
           '"'.mysql_escape_string($posted['timeTakenMilliseconds']).'",'.
           '"'.mysql_escape_string($posted['work']).'",'.
           '"'.mysql_escape_string($s3Path).'",'.
-          'false'
+          'false'.
         ')';
        
       mysql_query($q);
@@ -59,7 +59,7 @@ class wuresult extends \pages{
               WHERE `wu_id` = "' . mysql_escape_string($posted['id']) . '"
               AND `state` = "Validating"
               AND `validation_client` = "' . mysql_escape_string($posted['clientId']) . '"
-              AND `time_sent_validation` > UNIX_TIMESTAMP() - 1800
+              AND `time_sent_validation` > UNIX_TIMESTAMP() - 3000 
               LIMIT 1;';
     $res = mysql_query($query);
 
@@ -87,7 +87,7 @@ class wuresult extends \pages{
           '"'.mysql_escape_string($posted['timeTakenMilliseconds']).'",'.
           '"'.mysql_escape_string($posted['work']).'",'.
           '"'.mysql_escape_string($s3Path).'",'.
-          'true'
+          'true'.
         ')';
        
       mysql_query($q);
