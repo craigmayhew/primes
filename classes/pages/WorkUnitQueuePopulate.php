@@ -16,7 +16,7 @@ class WorkUnitQueuePopulate extends \pages {
       $res = mysql_query($q);
       $count =  mysql_result($res, 0);
       echo "$count units in buffer\r\n";
-      if ($count < 150) {
+      if ($count < 50) {
         echo "Generating some more";
         // generate 50 units
         // where to start?
@@ -29,7 +29,7 @@ class WorkUnitQueuePopulate extends \pages {
         }
         $start = bcadd($res, '1');
         for ($i = 0; $i < 50; $i++) {
-                $size = rand(400000, 1500000);
+                $size = 1500000; // rand(600000, 1500000);
                 $to   = bcadd($start, bcadd($size, "-1"));
                 $q = "INSERT INTO `bigprimes`.`wu` (`wu_id`, `generated`, `start`, `to`, `technique`, `size`, `state`) VALUES ('" . self::gen_uuid() . "', '" . time() . "', '" . $start . "', '" . $to . "', 'bf', '$size', 'New');";
                 mysql_query($q);
@@ -41,7 +41,7 @@ class WorkUnitQueuePopulate extends \pages {
         mysql_query($q);
         echo "Generated units up to " . bcadd($start, "-1") . "\r\n";
       }
-      sleep(60);
+      sleep(15);
     } while (true);
   }
 
