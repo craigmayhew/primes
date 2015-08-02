@@ -8,7 +8,7 @@ class wuget extends \pages{
     // echo '{ "command": "message", "message": "Nooooooo what are you doing?!" }'; exit();
     // echo '{ "command": "sleep" }'; exit();
     // echo '{ "command": "shutdown" }'; exit();
-    mysql_connect('bigprimes.ci4p9q2trkqm.eu-west-1.rds.amazonaws.com', 'root', 'Juwv68XnUrXnBGzTfIib');
+    mysql_connect(getenv('bigprimesDBEndPoint'), getenv('bigprimesDBUser'), getenv('bigprimesDBPass'));
 
     // check the clientId that we've got
     $clientId = $_GET['clientId'];

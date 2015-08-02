@@ -6,6 +6,10 @@ if(isset($argv[1])){
   $_GET['page'] = $argv[1];
 }
 
+if(isset($argv[1])){
+  $_GET['page'] = $argv[1];
+}
+
 /*AUTOLOADER START*/
 //used to autoload classes
 function myAutoload($name){
@@ -29,7 +33,11 @@ if(function_exists('spl_autoload_register')){
 }
 require_once('../vendor/autoload.php');
 /*AUTOLOADER END*/
+<<<<<<< HEAD:html/index.php
 
+=======
+require_once('../vendor/autoload.php');
+>>>>>>> c707c823d2cb339795add95263d7ba8e779c837d:html/index.php
 $pageName = 'pages\\'.$_GET['page'];
 $page = new $pageName();
 echo $page->getContent();
