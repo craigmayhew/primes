@@ -4,4 +4,5 @@ error
 icons/
 noindex
 vendor
+.htaccess
 *~
