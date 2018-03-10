@@ -16,7 +16,7 @@
 /*Commnad line*/
 using namespace std;
 
-long primes_lookup[10000];
+long primes_lookup[10000] = {2, 3, 5};
 
 bool is_prime (long long n)
 { //this function doesnt work for 2...
@@ -52,61 +52,92 @@ int file_put_contents(string stringy, string fileName="unnamed.txt")
 {
   ofstream myfile;
   myfile.open ((fileName).c_str(),ios::app);
-  myfile << stringy << "\n";
+  myfile << stringy;
   myfile.close();
   return 1;
 }
 
 int main(int argc, char *argv[])
 {
-    int i, j;
+    int a, i, j;
     
     //generate primes array of first 100000 primes
     //this speeds up prime checking for bigger numbers
-    primes_lookup[0] = 2;
-    primes_lookup[1] = 3;
-    primes_lookup[2] = 5;
     for (i=1; i<10000; i++){
             primes_lookup[i] = next_prime(primes_lookup[i-1]);
     }
     //done building primes array
     
-    long long p;
-    long long n;
+    unsigned long long p,
+                       original_p,
+                       prev_p,
+                       n;
+    
     string primes_output = "";
     
 	//request a starting number from user interface
-    cout << "Type a starting number (e.g 1) \n";
+    cout << "Type a starting number (e.g 2) \n";
     
     cin >> p;
-    //p = round(p);
-    cout << "What number prime is  " << p << "? (e.g. 17 is the 7th, so you would type 7)\n";
+    original_p = p;
+    cout << "What number prime is  " << p << "? (e.g. 2 is the 1st, so you would type 1)\n";
     cin >> n;
+   
     
-    long a;
-    long long prev_p;
+    const unsigned int COLUMNS_IN_DB = 1000,
+    // A x B gives you the total number of primes we will produce.
+    // it's faster to loop through two smaller numbers A and B and give a command line output every A primes.
+    // setting A to 1000, and B to 1000 would produce 1 million numbers.
+                       TOTAL_NUMBERS_TO_PRODUCE_A = 1000,
+                       TOTAL_NUMBERS_TO_PRODUCE_B = 1000;
     
-    std::stringstream out;
-    std::stringstream filename;
+    std::stringstream out,
+                      filenamesql,
+                      filenamelist;
     
+    //BEGIN OUTPUT OF LIST
+    filenamelist << "primeslist.txt";
+    out.str("");
+    out << p << "\n";
+    for (a = 0; a < TOTAL_NUMBERS_TO_PRODUCE_A; a++){
+        for (j = 0; j < TOTAL_NUMBERS_TO_PRODUCE_B; j++){    
+            for (i = 0; i < COLUMNS_IN_DB; i++){
+                p = next_prime(p);
+                out << p << "\n";
+            }
+        }
+
+		//output a prime number to show progress
+        cout << p << "\n";
+        
+		//save prime list to disk
+		file_put_contents(out.str(),filenamelist.str());
+		
+		//reset buffers
+		out.str("");
+    }
+    //END OUTPUT OF LIST
+    
+    
+  
 	//the 3 hardcoded values here represent the three for loops (a,j and i) a little further down
-	//todo: these would be better as nicely named constants
-    filename << (long long) (n+(200000*100*1000)) << ".sql";
+    filenamesql << (unsigned long long) (n+(TOTAL_NUMBERS_TO_PRODUCE_A*TOTAL_NUMBERS_TO_PRODUCE_B*COLUMNS_IN_DB)) << ".sql";
     
     //db column names string
     string sql_start = "";
     out << "INSERT INTO primes_upto_million (n,prime";
-    for (i = 0; i < 1000; i++){
+    for (i = 0; i < COLUMNS_IN_DB; i++){
         out << ",diff_" << i;
     }
     out << ") VALUES ";
     sql_start = out.str();
     out.str("");
     
-    for (a = 0; a < 200000; a++){
+    p = original_p;
+    for (a = 0; a < TOTAL_NUMBERS_TO_PRODUCE_A; a++){
         out << sql_start;
-        for (j = 0; j < 100; j++){    
-            for (i = 0; i < 1000; i++){
+        for (j = 0; j < TOTAL_NUMBERS_TO_PRODUCE_B; j++){    
+            for (i = 0; i < COLUMNS_IN_DB; i++){
                 p = next_prime(p);
                 n++;
                 if (i == 0){
@@ -126,9 +157,8 @@ int main(int argc, char *argv[])
         cout << p << "\n";
         
 		//save sql queries to disk
-		file_put_contents(primes_output,filename.str());
+		file_put_contents(primes_output,filenamesql.str());
     }
     
-    system("PAUSE");
     return EXIT_SUCCESS;
 }
